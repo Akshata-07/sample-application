@@ -71,3 +71,44 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+        
+      
+      - name: Checkout GitOps repository
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/checkout@v4
+        with:
+          repository: Akshata-07/platform-gitops
+          ref: main
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: platform-gitops
+
+      - name: Update GitOps image tag
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        working-directory: platform-gitops
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os
+          import re
+
+          path = Path("charts/sample-application/values.yaml")
+          content = path.read_text()
+          updated, count = re.subn(
+              r'(?m)^(  tag:\s*).+$',
+              lambda m: f'{m.group(1)}"{os.environ["IMAGE_TAG"]}"',
+              content,
+          )
+
+          if count != 1:
+              raise SystemExit(f"Expected one image tag field, found {count}")
+
+          path.write_text(updated)
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add charts/sample-application/values.yaml
+          git commit -m "Deploy sample-application ${IMAGE_TAG}"
+          git push origin HEAD:main
