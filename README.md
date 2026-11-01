@@ -133,6 +133,19 @@ It runs on pushes and pull requests targeting the `main` branch.
 
 The AWS authentication, image push and GitOps update stages run on pushes to `main`, not on pull requests.
 
+### CI/CD Pipeline in Action
+
+The GitHub Actions workflow automates testing, Docker image building,
+Trivy vulnerability scanning, and pushing the image to Amazon ECR.
+
+![GitHub Actions Pipeline](./assets/02-github-actions-all-steps.png..png)
+
+### Docker Image Published to Amazon ECR
+
+The successfully built application image is pushed to Amazon ECR.
+
+![Amazon ECR Image](./assets/03-ecr-docker-image.png)
+
 ### Trivy Configuration
 
 Trivy scans the Docker image for operating-system and application-library vulnerabilities.
