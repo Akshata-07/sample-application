@@ -10,7 +10,7 @@ from prometheus_client import (
 
 app = FastAPI(
     title="DevOps Demo API",
-    version="0.1.0",
+    version="0.1.1",
 )
 
 REQUEST_COUNT = Counter(
@@ -56,7 +56,7 @@ async def record_metrics(request: Request, call_next):
 def root():
     return {
         "message": "DevOps Demo API",
-        "version": "0.1.0",
+        "version": "0.1.1",
     }
 
 
@@ -71,3 +71,4 @@ def metrics():
         content=generate_latest(),
         media_type=CONTENT_TYPE_LATEST,
     )
+
