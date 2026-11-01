@@ -10,7 +10,7 @@ def test_root():
     assert response.status_code == 200
     assert response.json() == {
         "message": "DevOps Demo API",
-        "version": "0.1.0",
+        "version": "0.1.1",
     }
 
 
@@ -30,3 +30,4 @@ def test_metrics_endpoint_exposes_request_metrics():
     assert "http_requests_total" in response.text
     assert 'endpoint="/"' in response.text
     assert "http_request_duration_seconds" in response.text
+
